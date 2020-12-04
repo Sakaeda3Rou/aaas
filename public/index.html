@@ -6,9 +6,10 @@
     <title>Welcome to Firebase Hosting</title>
 
     <!-- update the version number as needed -->
-    <script defer src="/__/firebase/8.0.1/firebase-app.js"></script>
+    <script src="/__/firebase/8.0.1/firebase-app.js"></script>
     <!-- include only the Firebase features as you need -->
-    <script defer src="/__/firebase/8.0.1/firebase-auth.js"></script>
+    <script src="/__/firebase/8.0.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/ui/4.6.1/firebase-ui-auth.js"></script>
     <script defer src="/__/firebase/8.0.1/firebase-database.js"></script>
     <script defer src="/__/firebase/8.0.1/firebase-firestore.js"></script>
     <script defer src="/__/firebase/8.0.1/firebase-functions.js"></script>
@@ -24,6 +25,9 @@
     <script defer src="/__/firebase/init.js?useEmulator=true"></script>
   </head>
   <body>
+
+    <div id="firebaseui-auth-container"></div>
+
     <div class="test-container">
       <form action="/function/inputProfile" method="get">
         <input type="submit" value="inputProfile">
@@ -71,6 +75,19 @@
           console.error(e);
           loadEl.textContent = 'Error loading the Firebase SDK, check the console.';
         }
+
+        var uiConfig = {
+          // ログイン成功後のリダイレクトURL
+          signInSuccessURL: '#',
+
+          // 設定
+          signInOptions: [
+            firebase.auth.GoogleAuthProvider.PROVIDER_ID
+          ],
+        }
+
+        var ui = new firebaseui.auth.AuthUI(firebase.auth());
+        ui.start('#firebaseui-auth-container', uiConfig);
       });
     </script>
   </body>
