@@ -1,4 +1,5 @@
 const functions = require('firebase-functions');
+const admin = require('firebase-admin');
 const express = require('express');
 const session = require('cookie-session');
 const bodyParser = require('body-parser');
@@ -19,6 +20,8 @@ app.use(session({
     maxage: 1000 * 60 * 1
   }
 }));
+
+admin.initializeApp(functions.config().firebase);
 
 // get regist user
 app.get('function/regist_user', (req, res) => {

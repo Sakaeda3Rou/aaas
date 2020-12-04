@@ -8,7 +8,7 @@ var firebaseConfig = {
 // Initialize Firebase
 // firebase.initializeApp(firebaseConfig);
 
-admin.initializeApp(functions.config().firebase);
+// admin.initializeApp(functions.config().firebase);
 
 let db = admin.firestore();
 
