@@ -46,7 +46,7 @@ exports.updateDoc = async(collectionName, id, data) => {
   // update document
   try{
     const res = await db.collection(collectionName).doc(id).update(data);
-  }.catch(err){
+  }catch(err){
     return {err: err};
   }
   return res;
@@ -58,7 +58,7 @@ exports.deleteDoc = async(collectionName, id) => {
   // delete document
   try{
     const res = await db.collection(collectionName).doc(id).delete();
-  }.catch(err){
+  }catch(err){
     return {err: err};
   }
 
@@ -163,17 +163,21 @@ exports.changeSelected = (userId, newObjectId) => {
         return {err: second.err};
       }
       const third = myObjectRef.where('userId', '==', userId).where('objectId', '==', newObjectId).get().then(snapshot => {
-        const second = _this.updateDoc('my_object', doc.id, {isSelected: true});
-        if(second.hasOwnProperty(err)){
-          return {err: second.err};
-        }
-      }).catch(err){
+        snapshot.forEach(doc => {
+          const four = _this.updateDoc('my_object', doc.id, {isSelected: true});
+          if(four.hasOwnProperty(err)){
+            return {err: four.err};
+          }
+        }).catch(err => {
+          return {err: err};
+        })
+      }).catch(err => {
         return {err: err};
-      }
+      })
     })
-  }).catch(err){
+  }).catch(err => {
     return {err: err};
-  }
+  })
 }
 
 exports.incrementNumberOfAdd = async(objectId) => {
