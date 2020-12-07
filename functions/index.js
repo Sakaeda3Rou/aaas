@@ -4,6 +4,7 @@ const express = require('express');
 const session = require('cookie-session');
 const bodyParser = require('body-parser');
 const fs = require('fs');
+const dao = require('./model/dao.js');
 
 const app = express();
 
@@ -23,15 +24,37 @@ app.use(session({
 
 admin.initializeApp(functions.config().firebase);
 
-// get regist user
-app.get('function/regist_user', (req, res) => {
+// get login
+app.get('function/login', (req, res) => {
   // TODO: make and save ARmarker
 
-  fs.readFile('views/regist_user.html', 'utf-8', (err, data) => {
-    res.writeHead(200, {'Content-Type': 'text/html'});
-    res.write(data);
-    res.end();
-  })
+  // TODO: select * from user_detail where userId = userId
+  // NB: insert userId at userId from session
+  const res = dao.selectDocOneColumn('user_detail', 'userId', '==', userId)
+
+  if(res == null){
+    // no document
+    // TODO: containment_clan
+    fs.readFile('views/regist_user.html', 'utf-8', (err, data) => {
+      res.writeHead(200, {'Content-Type': 'text/html'});
+      res.write(data);
+      res.end();
+    });
+  }else{
+    // not first login
+    fs.readFile('views/my_page.html', 'utf-8', (err, data) => {
+      res.writeHead(200, {'Content-Type': 'text/html'});
+      res.write(data);
+      res.end();
+    });
+  }
+});
+
+// post login
+app.post('/function/login', (req, res) => {
+  // TODO: save user at session
+
+  res.end();
 })
 
 //////////////
@@ -39,14 +62,14 @@ app.get('function/regist_user', (req, res) => {
 /////////////
 app.post('/function/my_page', (req, res) => {
   // TODO: パラメータを取得
-  // userName : {adana: 'UNC_Saikyouman'}
+  // FIXME: userName : {adana: 'UNC_Saikyouman'}
   let userName = req.body._userName;
   let birthday = req.body._birthday;
 
   // TODO: databaseへの登録 => dao
-  const dao = require('./model/dao.js')
+  const dao = require('./model/dao.js');
   // dao.登録メソッド（パラメータ）
-  dao.savewithId('user_detail', user_id, {userName:userName , birthday:birthday});
+  const res = dao.savewithId('user_detail', user_id, {userName:userName , birthday:birthday});
 
   // TODO: マイページへの遷移
   fs.readFile('views/my-page.html', 'utf-8', (err, data) => {
