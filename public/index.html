@@ -32,6 +32,9 @@
       <form action="/function/inputProfile" method="get">
         <input type="submit" value="inputProfile">
       </form>
+      <form action="/function/inputProfile" method="get">
+        <input type="submit" value="inputProfile">
+      </form>
     </div>
 
     <form action="/function/camera_test" method="get">
@@ -77,8 +80,33 @@
         }
 
         var uiConfig = {
-          // ログイン成功後のリダイレクトURL
-          signInSuccessURL: '#',
+          // ログイン成功時のコールバック
+          callbacks: {
+            signInSuccessWithAuthResult: function(authResult, redirectUrl) {
+
+              // フォームを作成
+              var form = document.createElement('form');
+              var request = document.createElement('input');
+
+              // フォームの送信先を設定
+              form.method = 'post';
+              form.action = '/function/login';
+
+              // リクエストを設定
+              request.type = 'hidden';
+              request.name = 'uid';
+              request.value = authResult.user.uid
+
+              // リクエストボディを設定
+              form.appendChild(request);
+              document.body.appendChild(form);
+
+              // フォームを送信
+              form.submit();
+
+              return false;
+            }
+          }
 
           // 設定
           signInOptions: [

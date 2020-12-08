@@ -23,6 +23,9 @@ app.use(session({
 
 admin.initializeApp(functions.config().firebase);
 
+exports.app = functions.https.onRequest(app);
+
+
 // get regist user
 app.get('function/regist_user', (req, res) => {
   // TODO: make and save ARmarker
