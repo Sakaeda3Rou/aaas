@@ -26,6 +26,11 @@ admin.initializeApp(functions.config().firebase);
 
 // get login
 app.get('function/login', (req, res) => {
+});
+
+// post login
+app.post('/function/login', (req, res) => {
+  // TODO: save user at session
   // TODO: make and save ARmarker
 
   // TODO: select * from user_detail where userId = userId
@@ -48,12 +53,6 @@ app.get('function/login', (req, res) => {
       res.end();
     });
   }
-});
-
-// post login
-app.post('/function/login', (req, res) => {
-  // TODO: save user at session
-
   res.end();
 })
 
@@ -189,16 +188,30 @@ app.post('/function/add_object', (req, res) => {
   // return my_object
 })
 
-//////////////////////////
-//オブジェクト共有への遷移//
-//////////////////////////
-app.get('/function/object_share', (req, res) => {
-  fs.readFile('views/object-share.html', 'utf-8', (err, data) => {
+// get share_object
+app.get('/function/share_object', (req, res) => {
+  fs.readFile('views/share_object.html', 'utf-8', (err, data) => {
     res.writeHead(200, {'Content-Type': 'text/html'});
     res.write(data);
     res.end();
   });
 });
+
+app.post('/function/share_object', (req, res) => {
+  // TODO: send word for search
+  //       and do search, return result
+  // return share_object
+})
+
+app.get('/function/share_my_object', (req, res) => {
+  // return my_object table page
+})
+
+app.post('/function/share_my_object', (req, res) => {
+  // TODO: send id about my_object's objectId
+  //       and update 'isShared'
+  // return
+})
 
 /////////////////////
 //クラン機能への遷移//
