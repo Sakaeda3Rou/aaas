@@ -24,10 +24,6 @@ app.use(session({
 
 admin.initializeApp(functions.config().firebase);
 
-// get login
-app.get('function/login', (req, res) => {
-});
-
 // post login
 app.post('/function/login', (req, res) => {
   // TODO: save user at session
