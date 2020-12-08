@@ -162,21 +162,21 @@ exports.changeSelected = (userId, newObjectId) => {
       if(second.hasOwnProperty(err)){
         return {err: second.err};
       }
-      const third = myObjectRef.where('userId', '==', userId).where('objectId', '==', newObjectId).get().then(snapshot => {
-        snapshot.forEach(doc => {
-          const four = _this.updateDoc('my_object', doc.id, {isSelected: true});
-          if(four.hasOwnProperty(err)){
-            return {err: four.err};
-          }
-        }).catch(err => {
-          return {err: err};
-        })
+    }).catch(err => {
+      return {err: err};
+    })
+    const third = myObjectRef.where('userId', '==', userId).where('objectId', '==', newObjectId).get().then(snapshot => {
+      snapshot.forEach(doc => {
+        const four = _this.updateDoc('my_object', doc.id, {isSelected: true});
+        if(four.hasOwnProperty(err)){
+          return {err: four.err};
+        }
       }).catch(err => {
         return {err: err};
       })
+    }).catch(err => {
+      return {err: err};
     })
-  }).catch(err => {
-    return {err: err};
   })
 }
 

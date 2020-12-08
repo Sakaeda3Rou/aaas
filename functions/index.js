@@ -25,17 +25,21 @@ app.use(session({
 admin.initializeApp(functions.config().firebase);
 
 // post login
-app.post('/function/login', (req, res) => {
+app.post('/login', (req, res) => {
   // TODO: save user at session
+  const uid = req.body.uid;
+
+  const user = {uid: uid};
+
+  req.session.user = user;
   // TODO: make and save ARmarker
 
   // TODO: select * from user_detail where userId = userId
   // NB: insert userId at userId from session
-  const res = dao.selectDocOneColumn('user_detail', 'userId', '==', userId)
+  const result = dao.selectDocOneColumn('user_detail', 'userId', '==', req.session.user.uid);
 
-  if(res == null){
+  if(result == null){
     // no document
-    // TODO: containment_clan
     fs.readFile('views/profile.html', 'utf-8', (err, data) => {
       res.writeHead(200, {'Content-Type': 'text/html'});
       res.write(data);
@@ -49,11 +53,19 @@ app.post('/function/login', (req, res) => {
       res.end();
     });
   }
-  res.end();
 })
 
 // get resist user
-app.get('/function/resist_user', (req, res) => {
+app.get('/resist_user', (req, res) => {
+  // TODO: send official clan to ejs
+  const result = dao.selectDocOneColumn('clan', 'official', '==', true);
+
+  result.forEach(doc => {
+    // send to ejs
+  }).catch(err => {
+    // has error
+  })
+
   fs.readFile('views/profile.html', 'utf-8', (err, data) => {
     res.writeHead(200, {'Content-Type': 'text/html'});
     res.write(data);
@@ -62,16 +74,20 @@ app.get('/function/resist_user', (req, res) => {
 })
 
 // post resist user
-app.post('/function/resist_user', (req, res) => {
+app.post('/resist_user', (req, res) => {
   // TODO: パラメータを取得
   // FIXME: userName : {adana: 'UNC_Saikyouman'}
   let userName = req.body._userName;
   let birthday = req.body._birthday;
 
   // TODO: databaseへの登録 => dao
-  const res = dao.savewithId('user_detail', user_id, {userName:userName , birthday:birthday});
+  const result = dao.savewithId('user_detail', user_id, {userName:userName , birthday:birthday});
 
-  // TODO: マイページへの遷移
+  if(result.hasOwnProperty(err)){
+    // has error
+  }
+
+  // マイページへの遷移
   fs.readFile('views/my_page.html', 'utf-8', (err, data) => {
     res.writeHead(200, {'Content-Type': 'text/html'});
     res.write(data);
@@ -80,8 +96,8 @@ app.post('/function/resist_user', (req, res) => {
 });
 
 // get my page
-app.get('/function/my_page', (req, res) => {
-  fs.readFile('views/my-page.html', 'utf-8', (err, data) => {
+app.get('/my_page', (req, res) => {
+  fs.readFile('views/my_page.html', 'utf-8', (err, data) => {
     res.writeHead(200, {'Content-Type': 'text/html'});
     res.write(data);
     res.end();
@@ -89,7 +105,15 @@ app.get('/function/my_page', (req, res) => {
 });
 
 // get profile
-app.get('/function/profile', (req, res) => {
+app.get('/profile', (req, res) => {
+  // TODO: get userName, birthday
+  const result = dao.selectDocById('user_detail', req.session.user.uid);
+
+  const userName = result.userName;
+  const birthday = result.birthday;
+
+  // TODO: insert to html's textbox by ejs
+
   fs.readFile('views/profile.html', 'utf-8', (err, data) => {
     res.writeHead(200, {'Content-Type': 'text/html'});
     res.write(data);
@@ -98,12 +122,20 @@ app.get('/function/profile', (req, res) => {
 });
 
 // update profile
-app.post('/function/profile', (req, res) => {
+app.post('/profile', (req, res) => {
   // get req.body
   let userName = req.body._userName;
   let birthday = req.body._birthday;
 
-  // TODO: require dao and throw datas for update
+  // TODO: throw datas for update
+  const userDetail = require('./model/user_detail.js');
+  userDetail.setUserDetail(userName, birthday);
+
+  const result = dao.updateDoc('user_detail', req.session.user.uid, userDetail.getUserDetail());
+
+  if(result.hasOwnProperty(err)){
+    // has error
+  }
 
   fs.readFile('views/my_page.html', 'utf-8', (err, data) => {
     res.writeHead(200, {'Content-Type': 'text/html'});
@@ -113,7 +145,7 @@ app.post('/function/profile', (req, res) => {
 })
 
 // get help
-app.get('function/help', (req, res) => {
+app.get('/help', (req, res) => {
   fs.readFile('views/help.html', 'utf-8', (err, data) => {
     res.writeHead(200, {'Content-Type': 'text/html'});
     res.write(data);
@@ -122,7 +154,7 @@ app.get('function/help', (req, res) => {
 })
 
 // get camera
-app.get('/function/camera', (req, res) => {
+app.get('/camera', (req, res) => {
   fs.readFile('views/camera.html', 'utf-8', (err, data) => {
     res.writeHead(200, {'Content-Type': 'text/html'});
     res.write(data);
@@ -131,35 +163,71 @@ app.get('/function/camera', (req, res) => {
 });
 
 // post camera
-app.post('/function/camera', (req, res) => {
+app.post('/camera', (req, res) => {
   // TODO: get parameter and prepare camera session
+  const camera = require('./model/camera.js');
+
   // return camera
+  fs.readFile('views/camera.html', 'utf-8', (err, data) => {
+    res.writeHead(200, {'Content-Type': 'text/html'});
+    res.write(data);
+    res.end();
+  });
 })
 
 // get object_selected
-app.get('/function/object_selected', (req, res) => {
-
+app.get('/object_selected', (req, res) => {
+  fs.readFile('views/object_selected.html', 'utf-8', (err, data) => {
+    res.writeHead(200, {'Content-Type': 'text/html'});
+    res.write(data);
+    res.end();
+  });
 })
 
 // post object_selected
-app.post('/function/object_selected', (req, res) => {
+app.post('/object_selected', (req, res) => {
   // TODO: send parameter about object
+  const newObjectId = req.body._newObjectId;
+
+  const result = dao.changeSelected(req.session.user.uid, newObjectId);
+
+  if(result.hasOwnProperty(err)){
+    // has error
+  }
+
   // return camera
+  fs.readFile('views/camera.html', 'utf-8', (err, data) => {
+    res.writeHead(200, {'Content-Type': 'text/html'});
+    res.write(data);
+    res.end();
+  });
 })
 
 // get clan_selected
-app.get('/function/clan_selected', (req, res) => {
-
+app.get('/clan_selected', (req, res) => {
+  fs.readFile('views/clan_selected.html', 'utf-8', (err, data) => {
+    res.writeHead(200, {'Content-Type': 'text/html'});
+    res.write(data);
+    res.end();
+  });
 })
 
 // post clan_selected
-app.post('/function/clan_selected', (req, res) => {
+app.post('/clan_selected', (req, res) => {
   // TODO: send parameter about clan
+  //       make data about clan for camera
+  const clanId = req.body._clanId;
+
   // return camera
+  fs.readFile('views/camera.html', 'utf-8', (err, data) => {
+    res.writeHead(200, {'Content-Type': 'text/html'});
+    res.write(data);
+    res.end();
+  });
 })
 
 // get my_object
-app.get('/function/my_object', (req, res) => {
+app.get('/my_object', (req, res) => {
   fs.readFile('views/my-object.html', 'utf-8', (err, data) => {
     res.writeHead(200, {'Content-Type': 'text/html'});
     res.write(data);
@@ -168,24 +236,58 @@ app.get('/function/my_object', (req, res) => {
 });
 
 // post my_object
-app.post('/function/my_object', (req, res) => {
-  // TODO: send data about object and save
+app.post('/my_object', (req, res) => {
+  // TODO: search my_object about category
+  // and sort about 'numberOfAdd'
+
   // return my_object
+  fs.readFile('views/my_object.html', 'utf-8', (err, data) => {
+    res.writeHead(200, {'Content-Type': 'text/html'});
+    res.write(data);
+    res.end();
+  });
 })
 
 // get add_object
-app.get('/function/add_object', (req, res) => {
-
+app.get('/add_object', (req, res) => {
+  fs.readFile('views/add_object.html', 'utf-8', (err, data) => {
+    res.writeHead(200, {'Content-Type': 'text/html'});
+    res.write(data);
+    res.end();
+  });
 })
 
 // post add_object
-app.post('/function/add_object', (req, res) => {
-  // TODO: send data about object and save
+app.post('/add_object', (req, res) => {
+  // TODO: save in storage and make object
+  //       require sao, dao
+  //       then save object make var about objectId
+
+  // TODO: send data about my_object and save
+  const locationX = req.body._locationX;
+  const locationY = req.body._locationY;
+  const locationZ = req.body._locationZ;
+
+  const myObject = require('./model/my_object.js');
+
+  myObject.setMyObject(req.session.user.uid, objectId, true, locationX, locationY, locationZ);
+
+  const result = dao.saveWithoutId('my_object', myObject.getMyObject());
+
+  if(result.hasOwnProperty(err)){
+    // has error
+  }
+
   // return my_object
+  fs.readFile('views/my_object.html', 'utf-8', (err, data) => {
+    res.writeHead(200, {'Content-Type': 'text/html'});
+    res.write(data);
+    res.end();
+  });
 })
 
 // get share_object
-app.get('/function/share_object', (req, res) => {
+app.get('/share_object', (req, res) => {
   fs.readFile('views/share_object.html', 'utf-8', (err, data) => {
     res.writeHead(200, {'Content-Type': 'text/html'});
     res.write(data);
@@ -193,29 +295,120 @@ app.get('/function/share_object', (req, res) => {
   });
 });
 
-app.post('/function/share_object', (req, res) => {
+// post share_object
+app.post('/share_object', (req, res) => {
   // TODO: send word for search
   //       and do search, return result
+
   // return share_object
+  fs.readFile('views/share_object.html', 'utf-8', (err, data) => {
+    res.writeHead(200, {'Content-Type': 'text/html'});
+    res.write(data);
+    res.end();
+  });
 })
 
-app.get('/function/share_my_object', (req, res) => {
+// get share_my_object
+app.get('/share_my_object', (req, res) => {
   // return my_object table page
+  fs.readFile('views/my_object_table.html', 'utf-8', (err, data) => {
+    res.writeHead(200, {'Content-Type': 'text/html'});
+    res.write(data);
+    res.end();
+  });
 })
 
-app.post('/function/share_my_object', (req, res) => {
+// post share_my_object
+app.post('/share_my_object', (req, res) => {
+  // TODO: send id about my_object's documentId
+  const docId = req.body._docId;
+
+  const result = dao.selectDocById('my_object', docId);
+
+  if(result.hasOwnProperty(err) || result == null){
+    // has error
+  }
+
+  // return config my_object page
+  fs.readFile('views/config_my_object.html', 'utf-8', (err, data) => {
+    res.writeHead(200, {'Content-Type': 'text/html'});
+    res.write(data);
+    res.end();
+  });
+})
+
+// put share_my_object
+app.put('/share_my_object', (req, res) => {
   // TODO: send id about my_object's objectId
   //       and update 'isShared'
-  // return
+  const objectId = req.body._objectId;
+
+  const result = dao.updateDoc('object', objectId, {isShared: true});
+
+  if(result.hasOwnProperty(err)){
+    // has error
+  }
+
+  // return my_object table page
+  fs.readFile('views/my_object_table.html', 'utf-8', (err, data) => {
+    res.writeHead(200, {'Content-Type': 'text/html'});
+    res.write(data);
+    res.end();
+  });
 })
 
-/////////////////////
-//クラン機能への遷移//
-////////////////////
-app.get('/function/clan', (req, res) => {
+//get clan
+app.get('/clan', (req, res) => {
+  // return clan page
   fs.readFile('views/clan.html', 'utf-8', (err, data) => {
     res.writeHead(200, {'Content-Type': 'text/html'});
     res.write(data);
     res.end();
   });
-});
+})
+
+// post clan
+app.post('/clan', (req, res) => {
+  // TODO: search clan by category
+  //       and sort by 'numberOfAdd'
+
+  // return clan page
+  fs.readFile('views/clan.html', 'utf-8', (err, data) => {
+    res.writeHead(200, {'Content-Type': 'text/html'});
+    res.write(data);
+    res.end();
+  });
+})
+
+// get clan_make
+app.get('/clan_make', (req, res) => {
+  // return make clan page
+  fs.readFile('views/make_clan.html', 'utf-8', (err, data) => {
+    res.writeHead(200, {'Content-Type': 'text/html'});
+    res.write(data);
+    res.end();
+  });
+})
+
+// post clan_make
+app.post('/clan_make', (req, res) => {
+  // TODO: send clanName for make clan
+  //       save clan
+  const clanName = req.body._clanName;
+
+  const clan = require('./model/clan.js');
+  clan.setclan(clanName, 0, false);
+
+  const result = dao.saveWithoutId('clan', clan.getClan());
+
+  if(result.hasOwnProperty(err)){
+    // has error
+  }
+
+  // return clan page
+  fs.readFile('views/make_clan.html', 'utf-8', (err, data) => {
+    res.writeHead(200, {'Content-Type': 'text/html'});
+    res.write(data);
+    res.end();
+  });
+})

@@ -7,7 +7,7 @@
     "public": "public",
     "rewrites": [
       {
-        "source": "/function/**",
+        "source": "/**",
         "function": "app"
       }
     ],
