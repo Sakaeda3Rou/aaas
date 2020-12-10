@@ -4,7 +4,7 @@ const functions = require('firebase-functions');
 const bucket = admin.storage().bucket();
 
 // マーカーファイルのアップロード
-exports.upload_marker = (file_name, body) => {
+exports.uploadMarker = (file_name, body) => {
   return new Promise((resolve, reject) => {
 
     // 整形
@@ -23,7 +23,7 @@ exports.upload_marker = (file_name, body) => {
 };
 
 // パターンファイルのアップロード
-exports.upload_patt = (file_name, body) => {
+exports.uploadPatt = (file_name, body) => {
   return new Promise((resolve, reject) => {
 
     const upload_file = bucket.file(`patterns/${file_name}`);
@@ -37,11 +37,39 @@ exports.upload_patt = (file_name, body) => {
   });
 };
 
-// ファイルのメディアURLを取得
-exports.get_file_url = async (file_name) => {
+// オブジェクトファイルのアップロード
+exports.uploadObject = (file_name, body) => {
+  return new Promise((resolve, reject)j => {
+
+    const upload_file = bucket.file(`object_images/${file_name}`);
+
+    upload_file.ave(body, {
+      predefinedAcl: 'publicRead',
+      metadata: {
+        // TODO: contentTypeを設定
+        contentType: 'application/octet-stream',
+      },
+    });
+  });
+};
+
+// パターンファイルのURLを取得
+exports.getPattUrl = async (file_name) => {
 
   // 指定ファイルのメタデータを取得
   const file = await buket.file(`patterns/${file_name}`).getMetadata();
+
+  // メタデータからメディアURLを取得
+  const file_url = file[0].mediaLink
+
+  return file_url;
+};
+
+// オブジェクトファイルのURLを取得
+exports.getObjectUrl = async (file_name) => {
+
+  // 指定ファイルのメタデータを取得
+  const file = await buket.file(`images/${file_name}`).getMetadata();
 
   // メタデータからメディアURLを取得
   const file_url = file[0].mediaLink
