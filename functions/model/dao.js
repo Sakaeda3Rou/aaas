@@ -108,17 +108,25 @@ exports.selectDocOneColumn = (collectionName, columnName, operator, word) => {
   });
 }
 
+// when you use : select double table (ex: my_object and object)
+// need first collection's xxId (ex: userId, clanId) as 'id',
+//      first collection's id name (ex: 'userId') as 'idName',
+//      first collection's name as 'firstCollectionName',
+//      second collection's name as 'firstColectionName'
+// NB: return result by array
 exports.selectDoubleTable = async(id, idName, firstCollectionName, secondCollectionName) => {
   const firstRef = db.collection(firstCollectionName);
   const secondRef = db.collection(secondCollectionName);
 
+  // make result array
   let returnArray = [];
-  let secondId = '';
 
+  // first sellection
   const first = firstRef.where(idName, '==', id).get().then(snapshot => {
     if(snapshot.empty){
       return null;
     }
+    // NB: three pattern i think
     if(idName == 'clanId'){
       snapshot.forEach(doc => {
         const second = secondRef.doc(doc.clanId).get().then(doc => {
@@ -150,14 +158,19 @@ exports.selectDoubleTable = async(id, idName, firstCollectionName, secondCollect
   });
 }
 
+// when you use : change status 'isSelected'
+// need user's id as userId
+//      object's id what you want to change status to true as 'newObjectId'
 exports.changeSelected = (userId, newObjectId) => {
   const myObjectRef = db.collection('my_object');
 
+  // select object's id what you want to change status to false
   const first = myObjectRef.where('userId', '==', userId).where('isSelected', '==', true).get().then(snapshot => {
     if(snapshot.empty){
       return null;
     }
     snapshot.forEach(doc => {
+      // change status to false
       const second = _this.updateDoc('my_object', doc.id, {isSelected: false});
       if(second.hasOwnProperty(err)){
         return {err: second.err};
@@ -167,6 +180,7 @@ exports.changeSelected = (userId, newObjectId) => {
     })
     const third = myObjectRef.where('userId', '==', userId).where('objectId', '==', newObjectId).get().then(snapshot => {
       snapshot.forEach(doc => {
+        // change status to true
         const four = _this.updateDoc('my_object', doc.id, {isSelected: true});
         if(four.hasOwnProperty(err)){
           return {err: four.err};
@@ -177,9 +191,12 @@ exports.changeSelected = (userId, newObjectId) => {
     }).catch(err => {
       return {err: err};
     })
+    return {result: success};
   })
 }
 
+// when you use : for increment numberOfAdd
+// need object's id as 'objectId'
 exports.incrementNumberOfAdd = async(objectId) => {
   const res = await db.collection('object').doc(objectId).update({
     numberOfAdd: admin.firestore.fieldValue.increment(1)
