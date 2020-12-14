@@ -22,7 +22,7 @@ cameraBtns.forEach(btn => {
                 label.appendChild(check);
                 label.appendChild(document.createTextNode(clan));
                 modalList.appendChild(li);
-            });                    
+            });
         } else { //マイオブジェクトボタンを押されたらmodalの中身をマイオブジェクト選択に変更
             modalList.innerHTML = '';
             modalTitle.innerText = 'マイオブジェクトから選択';

@@ -83,6 +83,7 @@
                                 <label><input type="checkbox">カテゴリ</label>
                             </div>
                         </div>
+                        <!-- 共有するボタン -->
                         <div class="my-object-list__decision">
                             <input type="submit" value="マイオブジェクトを共有する" class="main-btn my-object-list__submit">
                             <input type="reset" value="キャンセル" class="sub-btn my-object-list__cansel" id="js-category-cansel">
@@ -120,6 +121,7 @@
                 <div class="object-modal__container">
                     <!-- 選択中の画像を表示 -->
                     <div class="object-modal__select"></div>
+                    <!-- 共有オブジェクトをマイオブジェクトに追加するボタン -->
                     <div class="object-modal__btn">
                     </div>
                 </div>
@@ -232,7 +234,7 @@
                 myObjectListItems.classList.toggle('my-object-list__items--close');
 
                 if (categoryMyObject.classList.contains('category-open')) {
-                    categoryMyObject.style.height = '80%';
+                    categoryMyObject.style.height = '90%';
                 } else {
                     categoryMyObject.style.height = 0;
                 }
@@ -240,7 +242,7 @@
                 if (myObjectListItems.classList.contains('my-object-list__items--close')) {
                     myObjectListItems.style.height = 0;
                 } else {
-                    myObjectListItems.style.height = '80%';
+                    myObjectListItems.style.height = '90%';
                 }
             });
         });
@@ -250,7 +252,7 @@
             myObjectListItems.classList.toggle('my-object-list__items--close');
 
             if (categoryMyObject.classList.contains('category-open')) {
-                categoryMyObject.style.height = '80%';
+                categoryMyObject.style.height = '90%';
             } else {
                 categoryMyObject.style.height = 0;
             }
@@ -258,7 +260,7 @@
             if (myObjectListItems.classList.contains('my-object-list__items--close')) {
                 myObjectListItems.style.height = 0;
             } else {
-                myObjectListItems.style.height = '80%';
+                myObjectListItems.style.height = '90%';
             }
         });
     //マイオブジェクト一覧の"マイオブジェクトを共有する"ボタンを押した時に起こる処理（サーバーに接続し、アップデート処理が必要）
