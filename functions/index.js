@@ -27,6 +27,8 @@ admin.initializeApp(functions.config().firebase);
 
 // post login
 app.post('/login', (req, res) => {
+  console.log('welcom to login page');
+
   // TODO: save user at session
   const uid = req.body.uid;
 
@@ -41,18 +43,20 @@ app.post('/login', (req, res) => {
 
   if(result == null){
     // no document
-    fs.readFile('views/profile.html', 'utf-8', (err, data) => {
-      res.writeHead(200, {'Content-Type': 'text/html'});
-      res.write(data);
-      res.end();
-    });
+    // fs.readFile('views/profile.html', 'utf-8', (err, data) => {
+    //   res.writeHead(200, {'Content-Type': 'text/html'});
+    //   res.write(data);
+    //   res.end();
+    // });
+    res.render('views/profile')
   }else{
     // not first login
-    fs.readFile('views/my_page.html', 'utf-8', (err, data) => {
-      res.writeHead(200, {'Content-Type': 'text/html'});
-      res.write(data);
-      res.end();
-    });
+    // fs.readFile('views/my_page.html', 'utf-8', (err, data) => {
+    //   res.writeHead(200, {'Content-Type': 'text/html'});
+    //   res.write(data);
+    //   res.end();
+    // });
+    res.render('views/my-page')
   }
 })
 
@@ -412,4 +416,19 @@ app.post('/clan_make', (req, res) => {
     res.write(data);
     res.end();
   });
+})
+
+exports.style = functions.https.onRequest((req, res) => {
+  fs.readFile('static/css/style.css', 'utf-8', (err, data) => {
+    res.writeHead(200, {'Content-Type': 'text/css'});
+    res.write(data);
+    res.end();
+  });
+});
+
+exports.reset = functions.https.onRequest((req, res) => {
+  fs.readFile('static/css/reset.css', 'utf-8', (err, data) => {
+    res.write(data);
+    res.end();
+  })
 })
