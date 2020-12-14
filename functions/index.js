@@ -4,7 +4,7 @@ const express = require('express');
 const session = require('cookie-session');
 const bodyParser = require('body-parser');
 const fs = require('fs');
-const dao = require('./model/dao.js');
+const dao = require('./static/model/dao.js');
 
 const app = express();
 
@@ -128,7 +128,7 @@ app.post('/profile', (req, res) => {
   let birthday = req.body._birthday;
 
   // TODO: throw datas for update
-  const userDetail = require('./model/user_detail.js');
+  const userDetail = require('./static/model/user_detail.js');
   userDetail.setUserDetail(userName, birthday);
 
   const result = dao.updateDoc('user_detail', req.session.user.uid, userDetail.getUserDetail());
@@ -165,7 +165,7 @@ app.get('/camera', (req, res) => {
 // post camera
 app.post('/camera', (req, res) => {
   // TODO: get parameter and prepare camera session
-  const camera = require('./model/camera.js');
+  const camera = require('./static/model/camera.js');
 
   // return camera
   fs.readFile('views/camera.html', 'utf-8', (err, data) => {
@@ -268,7 +268,7 @@ app.post('/add_object', (req, res) => {
   const locationY = req.body._locationY;
   const locationZ = req.body._locationZ;
 
-  const myObject = require('./model/my_object.js');
+  const myObject = require('./static/model/my_object.js');
 
   myObject.setMyObject(req.session.user.uid, objectId, true, locationX, locationY, locationZ);
 
@@ -396,7 +396,7 @@ app.post('/clan_make', (req, res) => {
   //       save clan
   const clanName = req.body._clanName;
 
-  const clan = require('./model/clan.js');
+  const clan = require('./static/model/clan.js');
   clan.setclan(clanName, 0, false);
 
   const result = dao.saveWithoutId('clan', clan.getClan());
