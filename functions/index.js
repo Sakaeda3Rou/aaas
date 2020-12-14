@@ -28,7 +28,7 @@ app.use(session({
   cookie: {
     httpOnly: true,
     secure: false,
-    maxage: 1000 * 60 * 1
+    maxage: 1000 * 60 * 60 * 1
   }
 }));
 
@@ -37,25 +37,40 @@ exports.app = functions.https.onRequest(app);
 // post login
 app.post('/login', (req, res) => {
 
-  // TODO: save user at session
+  // uidパラメータを取得
   const uid = req.body.uid;
   const user = {uid: uid};
+
+  console.log(`uid => ${uid}`)
 
   // ユーザーをセッションに保存
   req.session.user = user;
 
-  // TODO: make and save ARmarkerf
-  const orient = require('static/model/orient_devil.js');
-
-  // TODO: select * from user_detail where userId = userId
   // NB: insert userId at userId from session
   const result = dao.selectDocOneColumn('user_detail', 'userId', '==', req.session.user.uid);
 
   if(result == null){
     // no document
-    res.render('profile');
+
+    // TODO: 確認
+    console.log('no document');
+
+    // make and save ARmarkerf
+    const orient = require('./static/model/orient_devil.js');
+    marker_url = orient.createImage(uid);
+
+    // TODO: 確認
+
+    res.render('profile', {
+      // aタグ(キャンセルボタン)のリンク先をホーム画面に設定
+      cancel_link_url: '/',
+      marker_url: `${marker_url}`,
+    });
   }else{
     // not first login
+
+    // TODO: 確認
+    console.log('not first login');
     res.render('my-page')
   }
 })
@@ -76,16 +91,17 @@ app.get('/resist_user', (req, res) => {
 
 // post resist user
 app.post('/resist_user', (req, res) => {
-  // TODO: パラメータを取得
+  // パラメータを取得
   // FIXME: userName : {adana: 'UNC_Saikyouman'}
   let userName = req.body._userName;
   let birthday = req.body._birthday;
 
-  // TODO: databaseへの登録 => dao
+  // userDetailをfirestoreに格納
   const result = dao.savewithId('user_detail', user_id, {userName:userName , birthday:birthday});
 
   if(result.hasOwnProperty(err)){
     // has error
+    console.log(`hasOwnProperty error: ${err}`);
   }
 
   // マイページへの遷移

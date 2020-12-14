@@ -28,17 +28,17 @@
 
             <div class="bottom-page">
 
-                <form class="my-user">
+                <form class="my-user" action="/login" method="post">
                     <div class="my-user__name">ユーザー名:　
-                        <input type="text">
+                        <input type="text" name="_name">
                     </div>
 
                     <div class="my-user__birthday">生年月日:　
-                        <input type="date">
+                        <input type="date" name="_date">
                     </div>
                     <div class="my-user__profile-btn">
                         <input type="submit" class="save-btn main-btn" value="保存"></input>
-                        <a class="cancel-btn main-btn" href="my-page.html">キャンセル</a>
+                        <a class="cancel-btn main-btn" href="<%= cancel_link_url %>">キャンセル</a>
                     </div>
                 </from>
             </div>

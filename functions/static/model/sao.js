@@ -39,7 +39,7 @@ exports.uploadPatt = (file_name, body) => {
 
 // オブジェクトファイルのアップロード
 exports.uploadObject = (file_name, body) => {
-  return new Promise((resolve, reject)j => {
+  return new Promise((resolve, reject) => {
 
     const upload_file = bucket.file(`object_images/${file_name}`);
 
@@ -58,6 +58,18 @@ exports.getPattUrl = async (file_name) => {
 
   // 指定ファイルのメタデータを取得
   const file = await buket.file(`patterns/${file_name}`).getMetadata();
+
+  // メタデータからメディアURLを取得
+  const file_url = file[0].mediaLink
+
+  return file_url;
+};
+
+// マーカーのURLを取得
+exports.getMarkerUrl = async (file_name) => {
+
+  // 指定ファイルのメタデータを取得
+  const file = await buket.file(`marker_images/${file_name}`).getMetadata();
 
   // メタデータからメディアURLを取得
   const file_url = file[0].mediaLink

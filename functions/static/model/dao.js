@@ -2,13 +2,6 @@ var _this = this;
 const admin = require('firebase-admin');
 const functions = require('firebase-functions');
 
-var firebaseConfig = {
-    // TODO: insert your config
-  };
-// Initialize Firebase
-// firebase.initializeApp(firebaseConfig);
-
-// admin.initializeApp(functions.config().firebase);
 
 let db = admin.firestore();
 

@@ -3,33 +3,40 @@ const {createCanvas, loadImage} = require('canvas')
 const canvas = createCanvas()
 const context = canvas.getContext('2d')
 
-exports.create_image = async(uid) => {
+exports.createImage = async(uid) => {
 
   // 基礎imageをロード
-  let image = await loadImage('images/wappenQR.png')
+  let image = await loadImage('static/images/wappenQR.png')
 
   // キャンバンスのサイズを設定
   canvas.width = image.width
   canvas.height = image.height
 
   // imageにuidを書き込む
-  image = await draw_uid_to_image(uid, image)
+  image = await drawUidToImage(uid, image)
 
   // pattFileStringを作成
-  const pattFileString = await create_patt(image)
+  const pattFileString = await createPatt(image)
 
-  // imageに黒枠を追加
-  image = await add_black_frame(image)
+  // imageに黒枠を追加 マーカーの完成
+  const marker = await addBlackFrame(image)
 
-  sao.upload_patt(`${uid}.patt`, pattFileString)
+  // マーカーパターンをストレージに保存
+  sao.uploadPatt(`${uid}.patt`, pattFileString)
 
-  // imageをストレージに保存
-  sao.upload_image(`${uid}.png`, image.src)
+  // マーカーをストレージに保存
+  sao.uploadMarker(`${uid}.png`, image.src)
+
+  // マーカーのURLを取得
+  const marker_url = await sao.getMarkerUrl(`${uid}.png`);
+
+  // 作成したマーカーのURLを返す
+  return marker_url;
 
 }
 
 // uidを描画
-async function draw_uid_to_image(uid, image) {
+async function drawUidToImage(uid, image) {
   const text1 = uid.substr(0, 14);
   const text2 = uid.substr(14, 14);
 
@@ -56,8 +63,8 @@ async function draw_uid_to_image(uid, image) {
 }
 
 // 黒枠を追加
-async function add_black_frame(image) {
-  const frame = await loadImage('images/black.png')
+async function addBlackFrame(image) {
+  const frame = await loadImage('static/images/black.png')
 
   // キャンバスのサイズを指定
   canvas.width = frame.width
@@ -69,15 +76,13 @@ async function add_black_frame(image) {
   // qrを被せる
   context.drawImage(image, 103, 103, image.width, image.height);
 
-  console.log(`toDataURL(add_black_frame) => ${canvas.toDataURL()}`)
-
   image.src = canvas.toDataURL();
 
   return image;
 }
 
 // pattファイルを作成
-async function create_patt(image) {
+async function createPatt(image) {
 
   canvas.width = 16;
   canvas.height = 16;
