@@ -5,8 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link rel="stylesheet" href="css/reset.css">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="http://localhost:5001/aaas-98173/us-central1/reset" type="text/css">
+    <link rel="stylesheet" href="http://localhost:5001/aaas-98173/us-central1/style" type="text/css">
 
     <!-- update the version number as needed -->
     <script src="/__/firebase/8.0.1/firebase-app.js"></script>
@@ -105,7 +105,6 @@
 
     </main>
     <footer id="footer" style="display: none;"></footer>
-    <p id="load">Firebase SDK Loadingf&hellip;</p>
     <!-- <script src="js/include.js"></script> -->
     <script src="js/home.js"></script>
     <script src="https://unpkg.com/ityped@1.0.3"></script>
@@ -144,7 +143,6 @@
 
     <script>
       document.addEventListener('DOMContentLoaded', function() {
-        const loadEl = document.querySelector('#load');
         // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
         // // The Firebase SDK is initialized and available here!
         //
@@ -173,10 +171,10 @@
             'remoteConfig',
             'performance',
           ].filter(feature => typeof app[feature] === 'function');
-          loadEl.textContent = `Firebase SDK loaded with ${features.join(', ')}`;
+          console.log(`Firebase SDK loaded with ${features.join(', ')}`);
         } catch (e) {
           console.error(e);
-          loadEl.textContent = 'Error loading the Firebase SDK, check the console.';
+          console.log('Error loading the Firebase SDK, check the console.');
         }
       });
     </script>

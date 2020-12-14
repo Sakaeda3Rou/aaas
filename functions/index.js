@@ -1,5 +1,8 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
+
+admin.initializeApp(functions.config().firebase);
+
 const express = require('express');
 const session = require('cookie-session');
 const bodyParser = require('body-parser');
@@ -8,10 +11,16 @@ const dao = require('./static/model/dao.js');
 
 const app = express();
 
+// テンプレートエンジンを設定
 app.set('view engine', 'ejs');
 
+// viewsの参照ディレクトリを設定
+app.set('views', 'static/views')
+
+// 静的ファイルのディレクトリを設定
 app.use(express.static('static'));
 
+// セッションの設定
 app.use(session({
   secret: 'secret',
   resave: false,
@@ -23,19 +32,20 @@ app.use(session({
   }
 }));
 
-admin.initializeApp(functions.config().firebase);
+exports.app = functions.https.onRequest(app);
 
 // post login
 app.post('/login', (req, res) => {
-  console.log('welcom to login page');
 
   // TODO: save user at session
   const uid = req.body.uid;
-
   const user = {uid: uid};
 
+  // ユーザーをセッションに保存
   req.session.user = user;
-  // TODO: make and save ARmarker
+
+  // TODO: make and save ARmarkerf
+  const orient = require('static/model/orient_devil.js');
 
   // TODO: select * from user_detail where userId = userId
   // NB: insert userId at userId from session
@@ -43,20 +53,10 @@ app.post('/login', (req, res) => {
 
   if(result == null){
     // no document
-    // fs.readFile('views/profile.html', 'utf-8', (err, data) => {
-    //   res.writeHead(200, {'Content-Type': 'text/html'});
-    //   res.write(data);
-    //   res.end();
-    // });
-    res.render('views/profile')
+    res.render('profile');
   }else{
     // not first login
-    // fs.readFile('views/my_page.html', 'utf-8', (err, data) => {
-    //   res.writeHead(200, {'Content-Type': 'text/html'});
-    //   res.write(data);
-    //   res.end();
-    // });
-    res.render('views/my-page')
+    res.render('my-page')
   }
 })
 
@@ -71,12 +71,8 @@ app.get('/resist_user', (req, res) => {
     // has error
   })
 
-  fs.readFile('views/profile.html', 'utf-8', (err, data) => {
-    res.writeHead(200, {'Content-Type': 'text/html'});
-    res.write(data);
-    res.end();
-  });
-})
+  res.render('profile');
+});
 
 // post resist user
 app.post('/resist_user', (req, res) => {
@@ -112,18 +108,20 @@ app.get('/my_page', (req, res) => {
 // get profile
 app.get('/profile', (req, res) => {
   // TODO: get userName, birthday
-  const result = dao.selectDocById('user_detail', req.session.user.uid);
+  // const result = dao.selectDocById('user_detail', req.session.user.uid);
 
-  const userName = result.userName;
-  const birthday = result.birthday;
+  // const userName = result.userName;
+  // const birthday = result.birthday;
 
   // TODO: insert to html's textbox by ejs
 
-  fs.readFile('views/profile.html', 'utf-8', (err, data) => {
-    res.writeHead(200, {'Content-Type': 'text/html'});
-    res.write(data);
-    res.end();
-  });
+  res.render('profile')
+
+  // fs.readFile('views/profile.html', 'utf-8', (err, data) => {
+  //   res.writeHead(200, {'Content-Type': 'text/html'});
+  //   res.write(data);
+  //   res.end();
+  // });
 });
 
 // update profile
@@ -419,7 +417,7 @@ app.post('/clan_make', (req, res) => {
 })
 
 exports.style = functions.https.onRequest((req, res) => {
-  fs.readFile('static/css/style.css', 'utf-8', (err, data) => {
+  fs.readFile('static/views/css/style.css', 'utf-8', (err, data) => {
     res.writeHead(200, {'Content-Type': 'text/css'});
     res.write(data);
     res.end();
@@ -427,8 +425,9 @@ exports.style = functions.https.onRequest((req, res) => {
 });
 
 exports.reset = functions.https.onRequest((req, res) => {
-  fs.readFile('static/css/reset.css', 'utf-8', (err, data) => {
+  fs.readFile('static/views/css/reset.css', 'utf-8', (err, data) => {
+    res.writeHead(200, {'Content-Type': 'text/css'});
     res.write(data);
     res.end();
-  })
-})
+  });
+});
