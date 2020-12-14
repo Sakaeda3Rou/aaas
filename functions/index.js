@@ -10,7 +10,8 @@ const app = express();
 
 app.set('view engine', 'ejs');
 
-app.use(express.static('model'));
+app.use(express.static('static'));
+
 app.use(session({
   secret: 'secret',
   resave: false,
