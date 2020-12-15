@@ -89,9 +89,11 @@ exports.selectDocOneColumn = (collectionName, columnName, operator, word) => {
   const res = db.collection(collectionName).where(columnName, operator, word).get().then(snapshot => {
     if(snapshot.empty){
       // no document
+      console.log('empty');
       return null;
     }else{
       // return result
+      console.log(`snapshot => ${snapshot}`);
       return snapshot;
     }
   }).catch(err => {

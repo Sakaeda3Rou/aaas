@@ -69,7 +69,7 @@ exports.getPattUrl = async (file_name) => {
 exports.getMarkerUrl = async (file_name) => {
 
   // 指定ファイルのメタデータを取得
-  const file = await buket.file(`marker_images/${file_name}`).getMetadata();
+  const file = await bucket.file(`marker_images/${file_name}`).getMetadata();
 
   // メタデータからメディアURLを取得
   const file_url = file[0].mediaLink

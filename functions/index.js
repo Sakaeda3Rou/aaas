@@ -35,7 +35,7 @@ app.use(session({
 exports.app = functions.https.onRequest(app);
 
 // post login
-app.post('/login', (req, res) => {
+app.post('/login', async(req, res) => {
 
   // uidパラメータを取得
   const uid = req.body.uid;
@@ -47,7 +47,8 @@ app.post('/login', (req, res) => {
   req.session.user = user;
 
   // NB: insert userId at userId from session
-  const result = dao.selectDocOneColumn('user_detail', 'userId', '==', req.session.user.uid);
+  const result = await dao.selectDocOneColumn('user_detail', 'userId', '==', uid);
+  console.log(`result => ${result}`)
 
   if(result == null){
     // no document
@@ -59,7 +60,9 @@ app.post('/login', (req, res) => {
     const orient = require('./static/model/orient_devil.js');
     marker_url = orient.createImage(uid);
 
+
     // TODO: 確認
+    console.log(`marker media url => ${marker_url}`);
 
     res.render('profile', {
       // aタグ(キャンセルボタン)のリンク先をホーム画面に設定

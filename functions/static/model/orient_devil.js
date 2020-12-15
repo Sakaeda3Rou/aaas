@@ -22,10 +22,10 @@ exports.createImage = async(uid) => {
   const marker = await addBlackFrame(image)
 
   // マーカーパターンをストレージに保存
-  sao.uploadPatt(`${uid}.patt`, pattFileString)
+  await sao.uploadPatt(`${uid}.patt`, pattFileString)
 
   // マーカーをストレージに保存
-  sao.uploadMarker(`${uid}.png`, image.src)
+  await sao.uploadMarker(`${uid}.png`, image.src)
 
   // マーカーのURLを取得
   const marker_url = await sao.getMarkerUrl(`${uid}.png`);
